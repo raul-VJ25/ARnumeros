@@ -6,148 +6,139 @@ using TMPro;
 
 public class MultipleImageTrackerManager : MonoBehaviour
 {
-    [Header("🎛️ Configuración de Seguimiento")]
+    [Header("Tracking Configuration")]
     [SerializeField] private List<GameObject> objectsToSpawn = new List<GameObject>();
+    [Range(5f, 25f)]
+    [SerializeField] private float smoothingSpeed = 12f;
+    [SerializeField] private Vector3 markerOffset = new Vector3(0f, 0.08f, 0.15f);
 
-    [Tooltip("Velocidad de suavizado (5-15 recomendado). Mayor = más rígido, Menor = más fluido")]
-    [Range(1f, 20f)]
-    [SerializeField] private float smoothingSpeed = 8f;
-
-    [Tooltip("Desplazamiento respecto a la tarjeta: X=Lateral, Y=Arriba, Z=Hacia ti")]
-    [SerializeField] private Vector3 markerOffset = new Vector3(0f, 0.08f, 0.18f);
-
-    [Header("🖥️ Interfaz de Usuario")]
-    [SerializeField] private GameObject detectionStatusPanel;
+    [Header("Status UI")]
+    [SerializeField] private GameObject statusPanel;
     [SerializeField] private TextMeshProUGUI statusText;
 
-    private ARTrackedImageManager _trackedImageManager;
-    private Dictionary<string, GameObject> _arObjects;
-    private Dictionary<string, bool> _activeStates;
+    private ARTrackedImageManager trackedImageManager;
+    private Dictionary<string, GameObject> arObjects = new Dictionary<string, GameObject>();
+    private Dictionary<string, bool> activeStates = new Dictionary<string, bool>();
+    private bool isObjectTouched = false;
 
     void Start()
     {
-        _trackedImageManager = GetComponent<ARTrackedImageManager>();
-        if (_trackedImageManager == null)
-        {
-            Debug.LogError("❌ Falta ARTrackedImageManager en el XR Origin.");
-            return;
-        }
-
-        _arObjects = new Dictionary<string, GameObject>();
-        _activeStates = new Dictionary<string, bool>();
+        trackedImageManager = GetComponent<ARTrackedImageManager>();
+        if (trackedImageManager == null) return;
 
         SetUpSceneElements();
-        _trackedImageManager.trackablesChanged.AddListener(OnImageTrackedChanged);
-        UpdateDetectionUI();
+        trackedImageManager.trackablesChanged.AddListener(OnImageTrackedChanged);
+        UpdateStatusUI();
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
-        if (_trackedImageManager != null)
-            _trackedImageManager.trackablesChanged.RemoveListener(OnImageTrackedChanged);
+        if (trackedImageManager != null)
+            trackedImageManager.trackablesChanged.RemoveListener(OnImageTrackedChanged);
     }
 
-    private void OnImageTrackedChanged(ARTrackablesChangedEventArgs<ARTrackedImage> eventArgs)
+    void Update()
     {
-        foreach (ARTrackedImage trackedImage in eventArgs.added)
-            UpdateTrackedImages(trackedImage);
-
-        foreach (ARTrackedImage trackedImage in eventArgs.updated)
-            UpdateTrackedImages(trackedImage);
-
-        foreach (var trackedImage in eventArgs.removed)
+        // Solo mostrar azul si ObjectManipulation detectó un toque en objeto
+        if (isObjectTouched)
         {
-            if (trackedImage.Value != null)
-            {
-                string imageName = trackedImage.Value.referenceImage.name;
-                if (_arObjects.ContainsKey(imageName))
-                {
-                    _arObjects[imageName].SetActive(false);
-                    _activeStates[imageName] = false;
-                }
-            }
-        }
-        UpdateDetectionUI();
-    }
-
-    private void UpdateTrackedImages(ARTrackedImage trackedImage)
-    {
-        if (trackedImage == null) return;
-
-        string imageName = trackedImage.referenceImage.name;
-        if (!_arObjects.ContainsKey(imageName)) return;
-
-        // Si el tracking se degrada, ocultar
-        if (trackedImage.trackingState is TrackingState.Limited or TrackingState.None)
-        {
-            _arObjects[imageName].SetActive(false);
-            _activeStates[imageName] = false;
-            return;
-        }
-
-        // Activar objeto
-        _arObjects[imageName].SetActive(true);
-        _activeStates[imageName] = true;
-
-        // Calcular posición y rotación objetivo con offset relativo a la tarjeta
-        Vector3 targetPos = trackedImage.transform.position
-                          + (trackedImage.transform.right * markerOffset.x)
-                          + (trackedImage.transform.up * markerOffset.y)
-                          + (trackedImage.transform.forward * markerOffset.z);
-
-        Quaternion targetRot = trackedImage.transform.rotation;
-
-        // Aplicar suavizado (Lerp para posición, Slerp para rotación)
-        Transform objTransform = _arObjects[imageName].transform;
-        float smoothFactor = smoothingSpeed * Time.deltaTime;
-
-        objTransform.position = Vector3.Lerp(objTransform.position, targetPos, smoothFactor);
-        objTransform.rotation = Quaternion.Slerp(objTransform.rotation, targetRot, smoothFactor);
-    }
-
-    private void UpdateDetectionUI()
-    {
-        if (statusText == null || detectionStatusPanel == null) return;
-
-        List<string> activeNames = new List<string>();
-        foreach (var kvp in _activeStates)
-        {
-            if (kvp.Value) activeNames.Add(kvp.Key);
-        }
-
-        if (activeNames.Count > 0)
-        {
-            detectionStatusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(30, 100, 30, 220);
-            statusText.text = $"✅ Detectando:\n{string.Join(", ", activeNames)}";
+            statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(20, 20, 150, 220);
+            statusText.text = "Object Selected";
             statusText.color = Color.white;
         }
         else
         {
-            detectionStatusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(100, 80, 20, 220);
-            statusText.text = " Buscando marcadores...";
-            statusText.color = new Color(1, 0.9f, 0.3f);
+            UpdateStatusUI();
         }
     }
 
-    private void SetUpSceneElements()
+    public void SetObjectTouched(bool touched)
+    {
+        isObjectTouched = touched;
+    }
+
+    void OnImageTrackedChanged(ARTrackablesChangedEventArgs<ARTrackedImage> eventArgs)
+    {
+        foreach (var img in eventArgs.added) UpdateTrackedImages(img);
+        foreach (var img in eventArgs.updated) UpdateTrackedImages(img);
+
+        foreach (var img in eventArgs.removed)
+        {
+            if (img.Value != null)
+            {
+                string name = img.Value.referenceImage.name;
+                if (arObjects.ContainsKey(name))
+                {
+                    arObjects[name].SetActive(false);
+                    activeStates[name] = false;
+                }
+            }
+        }
+        UpdateStatusUI();
+    }
+
+    void UpdateTrackedImages(ARTrackedImage trackedImage)
+    {
+        if (trackedImage == null) return;
+        string name = trackedImage.referenceImage.name;
+        if (!arObjects.ContainsKey(name)) return;
+
+        if (trackedImage.trackingState is TrackingState.Limited or TrackingState.None)
+        {
+            arObjects[name].SetActive(false);
+            activeStates[name] = false;
+            return;
+        }
+
+        arObjects[name].SetActive(true);
+        activeStates[name] = true;
+
+        Vector3 targetPos = trackedImage.transform.position
+                          + trackedImage.transform.right * markerOffset.x
+                          + trackedImage.transform.up * markerOffset.y
+                          + trackedImage.transform.forward * markerOffset.z;
+
+        Transform t = arObjects[name].transform;
+        float factor = 1f - Mathf.Exp(-smoothingSpeed * Time.deltaTime);
+        t.position = Vector3.Lerp(t.position, targetPos, factor);
+        t.rotation = Quaternion.Slerp(t.rotation, trackedImage.transform.rotation, factor);
+    }
+
+    void UpdateStatusUI()
+    {
+        if (statusPanel == null || statusText == null) return;
+
+        List<string> active = new List<string>();
+        foreach (var kvp in activeStates) if (kvp.Value) active.Add(kvp.Key);
+
+        if (active.Count > 0)
+        {
+            statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(30, 100, 30, 220);
+            statusText.text = "Detecting: " + string.Join(", ", active);
+            statusText.color = Color.white;
+        }
+        else
+        {
+            statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(100, 80, 20, 220);
+            statusText.text = "Searching for markers...";
+            statusText.color = new Color(1f, 0.9f, 0.3f);
+        }
+    }
+
+    void SetUpSceneElements()
     {
         foreach (GameObject prefab in objectsToSpawn)
         {
             if (prefab == null) continue;
-
             GameObject instance = Instantiate(prefab, Vector3.zero, Quaternion.identity);
             instance.name = prefab.name;
             instance.SetActive(false);
-
-            if (!_arObjects.ContainsKey(instance.name))
+            if (!arObjects.ContainsKey(instance.name))
             {
-                _arObjects.Add(instance.name, instance);
-                _activeStates.Add(instance.name, false);
+                arObjects.Add(instance.name, instance);
+                activeStates.Add(instance.name, false);
             }
-            else
-            {
-                Destroy(instance);
-            }
+            else Destroy(instance);
         }
     }
 }
