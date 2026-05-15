@@ -19,7 +19,6 @@ public class MultipleImageTrackerManager : MonoBehaviour
     private ARTrackedImageManager trackedImageManager;
     private Dictionary<string, GameObject> arObjects = new Dictionary<string, GameObject>();
     private Dictionary<string, bool> activeStates = new Dictionary<string, bool>();
-    private bool isObjectTouched = false;
 
     void Start()
     {
@@ -35,26 +34,6 @@ public class MultipleImageTrackerManager : MonoBehaviour
     {
         if (trackedImageManager != null)
             trackedImageManager.trackablesChanged.RemoveListener(OnImageTrackedChanged);
-    }
-
-    void Update()
-    {
-        // Solo mostrar azul si ObjectManipulation detectó un toque en objeto
-        if (isObjectTouched)
-        {
-            statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(20, 20, 150, 220);
-            statusText.text = "Object Selected";
-            statusText.color = Color.white;
-        }
-        else
-        {
-            UpdateStatusUI();
-        }
-    }
-
-    public void SetObjectTouched(bool touched)
-    {
-        isObjectTouched = touched;
     }
 
     void OnImageTrackedChanged(ARTrackablesChangedEventArgs<ARTrackedImage> eventArgs)
