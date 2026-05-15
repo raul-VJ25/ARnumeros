@@ -18,132 +18,22 @@ MonoBehaviour:
     m_Storage: []
   m_Images:
   - m_SerializedGuid:
-      m_GuidLow: 5013963744431416841
-      m_GuidHigh: 17905755460345073542
+      m_GuidLow: 5485271934514346626
+      m_GuidHigh: 18028994770596544897
     m_SerializedTextureGuid:
-      m_GuidLow: 2239618555597046564
-      m_GuidHigh: 7814086094712138987
-    m_Size: {x: 0, y: 0}
+      m_GuidLow: 812033613297103989
+      m_GuidHigh: 1002837509992916408
+    m_Size: {x: 0.1, y: 0.1}
     m_SpecifySize: 0
-    m_Name: 0
+    m_Name: Marker-1
     m_Texture: {fileID: 0}
   - m_SerializedGuid:
-      m_GuidLow: 5167760780690328900
-      m_GuidHigh: 14313096349596936330
-    m_SerializedTextureGuid:
-      m_GuidLow: 4185086997584050533
-      m_GuidHigh: 5611217899660706011
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: 1
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4628490904653319231
-      m_GuidHigh: 15612741389772978306
+      m_GuidLow: 4909495638781113410
+      m_GuidHigh: 16450015642876705964
     m_SerializedTextureGuid:
       m_GuidLow: 15344950541173537515
       m_GuidHigh: 14564586631627293082
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
+    m_Size: {x: 0.3, y: 0.3}
+    m_SpecifySize: 1
     m_Name: 2
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 5038210617997962086
-      m_GuidHigh: 5821827232335220131
-    m_SerializedTextureGuid:
-      m_GuidLow: 6283700871561272027
-      m_GuidHigh: 6527297165053223083
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: 3
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4786201812099485172
-      m_GuidHigh: 18374876984938417056
-    m_SerializedTextureGuid:
-      m_GuidLow: 10548810893376115673
-      m_GuidHigh: 3903397633338575400
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: 4
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4904891640113392926
-      m_GuidHigh: 5459631098904477581
-    m_SerializedTextureGuid:
-      m_GuidLow: 5761408509805280837
-      m_GuidHigh: 15501601261044578731
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: 5
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 5440737031380852709
-      m_GuidHigh: 4535899748489559220
-    m_SerializedTextureGuid:
-      m_GuidLow: 17421124377116340242
-      m_GuidHigh: 9477007005420137320
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: 6
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4620438861249179255
-      m_GuidHigh: 4195881724314303419
-    m_SerializedTextureGuid:
-      m_GuidLow: 10300946807692479132
-      m_GuidHigh: 8202508283625176200
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: 7
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 5107732101752167595
-      m_GuidHigh: 9332213684067355283
-    m_SerializedTextureGuid:
-      m_GuidLow: 6252341081722889133
-      m_GuidHigh: 15680113256373174795
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: 8
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 5259907118353125318
-      m_GuidHigh: 11722855910042174855
-    m_SerializedTextureGuid:
-      m_GuidLow: 10616137055377988183
-      m_GuidHigh: 7265130300063043976
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: 9
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4660148425914720467
-      m_GuidHigh: 15377455301752815749
-    m_SerializedTextureGuid:
-      m_GuidLow: 11976457264585280024
-      m_GuidHigh: 14927448185875979
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: igual
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4706760414889613796
-      m_GuidHigh: 6819247566820414119
-    m_SerializedTextureGuid:
-      m_GuidLow: 11512439824472578938
-      m_GuidHigh: 925757570835613915
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: mas
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4939378191091357220
-      m_GuidHigh: 6128773150774140806
-    m_SerializedTextureGuid:
-      m_GuidLow: 3919414491072649766
-      m_GuidHigh: 13717876441977934458
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: menos
     m_Texture: {fileID: 0}
