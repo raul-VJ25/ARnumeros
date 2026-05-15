@@ -751,10 +751,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MultipleImageTrackerManager
   objectsToSpawn:
-  - {fileID: 4304845809701220081, guid: 2cbb601429e39134ea413ea5e6b9d528, type: 3}
-  - {fileID: 4304845809701220081, guid: 49f41437d156eca40a9bd8f37ac9aa5a, type: 3}
+  - {fileID: 2193123467223501541, guid: f0bd05e5cf2e8b042bc3b5e242fe6222, type: 3}
+  - {fileID: 2193123467223501541, guid: d33efe3ba43d565459f8ec8728ed6e2d, type: 3}
+  - {fileID: 2193123467223501541, guid: 6a6d71f668ad91148a66102c5d885996, type: 3}
+  - {fileID: 2193123467223501541, guid: eae6879843c77cc4dbe9cc5010500ec8, type: 3}
+  - {fileID: 2193123467223501541, guid: 81d4dec4c7655524a983a9beca239da2, type: 3}
   smoothingSpeed: 20
-  markerOffset: {x: 0, y: 0.08, z: 0.01}
+  markerOffset: {x: 0, y: 0.1, z: 0.02}
   detectionStatusPanel: {fileID: 36020477}
   statusText: {fileID: 55340279}
 --- !u!1 &1060216204
