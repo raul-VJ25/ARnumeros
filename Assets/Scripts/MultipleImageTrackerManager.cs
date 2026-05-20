@@ -7,14 +7,16 @@ using TMPro;
 public class MultipleImageTrackerManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> objectsToSpawn = new List<GameObject>();
-    [SerializeField] private float smoothingSpeed = 12f;
+    [SerializeField] private float smoothingSpeed = 20f;
     [SerializeField] private Vector3 markerOffset = new Vector3(0f, 0.08f, 0.15f);
+    [SerializeField] private float positionThreshold = 0.002f;
     [SerializeField] private GameObject statusPanel;
     [SerializeField] private TextMeshProUGUI statusText;
 
     private ARTrackedImageManager trackedImageManager;
     private Dictionary<string, GameObject> arObjects = new Dictionary<string, GameObject>();
     private Dictionary<string, bool> activeStates = new Dictionary<string, bool>();
+    private Dictionary<string, Vector3> lastPositions = new Dictionary<string, Vector3>();
 
     void Start()
     {
@@ -74,9 +76,13 @@ public class MultipleImageTrackerManager : MonoBehaviour
                           + trackedImage.transform.forward * markerOffset.z;
 
         Transform t = arObjects[name].transform;
-        float factor = 1f - Mathf.Exp(-smoothingSpeed * Time.deltaTime);
-        t.position = Vector3.Lerp(t.position, targetPos, factor);
-        t.rotation = Quaternion.Slerp(t.rotation, trackedImage.transform.rotation, factor);
+
+        if (Vector3.Distance(t.position, targetPos) > positionThreshold)
+        {
+            float factor = 1f - Mathf.Exp(-smoothingSpeed * Time.deltaTime);
+            t.position = Vector3.Lerp(t.position, targetPos, factor);
+            t.rotation = Quaternion.Slerp(t.rotation, trackedImage.transform.rotation, factor);
+        }
     }
 
     void UpdateStatusUI()
@@ -112,6 +118,7 @@ public class MultipleImageTrackerManager : MonoBehaviour
             {
                 arObjects.Add(instance.name, instance);
                 activeStates.Add(instance.name, false);
+                lastPositions.Add(instance.name, Vector3.zero);
             }
             else Destroy(instance);
         }

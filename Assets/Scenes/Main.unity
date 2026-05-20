@@ -876,9 +876,10 @@ MonoBehaviour:
   infoPanel: {fileID: 1981892356}
   infoText: {fileID: 30489342}
   arCamera: {fileID: 1131689579}
-  rotationSpeed: 0.2
-  minScale: 0.01
+  rotationSpeed: 0.5
+  minScale: 0.03
   maxScale: 0.2
+  tapThreshold: 10
 --- !u!114 &890631885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,6 +908,7 @@ MonoBehaviour:
   - {fileID: 2193123467223501541, guid: 38a31669cfc479243a7bb79ad8781719, type: 3}
   smoothingSpeed: 20
   markerOffset: {x: 0, y: 0.1, z: 0.02}
+  positionThreshold: 0.01
   statusPanel: {fileID: 36020477}
   statusText: {fileID: 55340279}
 --- !u!1 &1060216204
