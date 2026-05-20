@@ -1,12 +1,8 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.EnhancedTouch;
 using System.Collections.Generic;
-
-// Alias para evitar conflictos de nombres con el sistema antiguo
-using ETouch = UnityEngine.InputSystem.EnhancedTouch.Touch;
-using ETouchPhase = UnityEngine.InputSystem.TouchPhase;
+using UnityEngine.InputSystem.EnhancedTouch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 public class ObjectManipulation : MonoBehaviour
 {
@@ -29,7 +25,6 @@ public class ObjectManipulation : MonoBehaviour
 
     void Start()
     {
-        // CRÍTICO: Habilitar el soporte táctil mejorado para New Input System
         EnhancedTouchSupport.Enable();
 
         if (arCamera == null) arCamera = Camera.main;
@@ -38,100 +33,68 @@ public class ObjectManipulation : MonoBehaviour
         InitializeTranslations();
     }
 
-    void OnDestroy()
-    {
-        EnhancedTouchSupport.Disable();
-    }
-
     void InitializeTranslations()
     {
-        translationData = new Dictionary<string, string>();
-        translationData["Number-0"] = "ES: Cero\nEN: Zero\nFR: Zéro\nDE: Null\nIT: Zero\nPT: Zero\nZH: 零\nJP: 零";
-        translationData["Number-1"] = "ES: Uno\nEN: One\nFR: Un\nDE: Eins\nIT: Uno\nPT: Um\nZH: 一\nJP: 一";
-        translationData["Number-2"] = "ES: Dos\nEN: Two\nFR: Deux\nDE: Zwei\nIT: Due\nPT: Dois\nZH: 二\nJP: 二";
-        translationData["Number-3"] = "ES: Tres\nEN: Three\nFR: Trois\nDE: Drei\nIT: Tre\nPT: Três\nZH: 三\nJP: 三";
-        translationData["Number-4"] = "ES: Cuatro\nEN: Four\nFR: Quatre\nDE: Vier\nIT: Quattro\nPT: Quatro\nZH: 四\nJP: 四";
-        translationData["Number-5"] = "ES: Cinco\nEN: Five\nFR: Cinq\nDE: Fünf\nIT: Cinque\nPT: Cinco\nZH: 五\nJP: 五";
-        translationData["Number-6"] = "ES: Seis\nEN: Six\nFR: Six\nDE: Sechs\nIT: Sei\nPT: Seis\nZH: 六\nJP: 六";
-        translationData["Number-7"] = "ES: Siete\nEN: Seven\nFR: Sept\nDE: Sieben\nIT: Sette\nPT: Sete\nZH: 七\nJP: 七";
-        translationData["Number-8"] = "ES: Ocho\nEN: Eight\nFR: Huit\nDE: Acht\nIT: Otto\nPT: Oito\nZH: 八\nJP: 八";
-        translationData["Number-9"] = "ES: Nueve\nEN: Nine\nFR: Neuf\nDE: Neun\nIT: Nove\nPT: Nove\nZH: 九\nJP: 九";
-        translationData["Symbol-Plus"] = "ES: Más / Suma\nEN: Plus\nFR: Plus\nDE: Plus\nIT: Più\nPT: Mais\nZH: 加\nJP: プラス";
-        translationData["Symbol-Minus"] = "ES: Menos / Resta\nEN: Minus\nFR: Moins\nDE: Minus\nIT: Meno\nPT: Menos\nZH: 减\nJP: マイナス";
-        translationData["Symbol-Equals"] = "ES: Igual\nEN: Equals\nFR: Égal\nDE: Gleich\nIT: Uguale\nPT: Igual\nZH: 等于\nJP: イコール";
+        translationData = new Dictionary<string, string>
+        {
+            {"0", "ES: Cero\nEN: Zero\nFR: Zéro\nDE: Null\nIT: Zero\nPT: Zero\nZH: 零\nJP: 零"},
+            {"1", "ES: Uno\nEN: One\nFR: Un\nDE: Eins\nIT: Uno\nPT: Um\nZH: 一\nJP: 一"},
+            {"2", "ES: Dos\nEN: Two\nFR: Deux\nDE: Zwei\nIT: Due\nPT: Dois\nZH: 二\nJP: 二"},
+            {"3", "ES: Tres\nEN: Three\nFR: Trois\nDE: Drei\nIT: Tre\nPT: Três\nZH: 三\nJP: 三"},
+            {"4", "ES: Cuatro\nEN: Four\nFR: Quatre\nDE: Vier\nIT: Quattro\nPT: Quatro\nZH: 四\nJP: 四"},
+            {"5", "ES: Cinco\nEN: Five\nFR: Cinq\nDE: Fünf\nIT: Cinque\nPT: Cinco\nZH: 五\nJP: 五"},
+            {"6", "ES: Seis\nEN: Six\nFR: Six\nDE: Sechs\nIT: Sei\nPT: Seis\nZH: 六\nJP: 六"},
+            {"7", "ES: Siete\nEN: Seven\nFR: Sept\nDE: Sieben\nIT: Sette\nPT: Sete\nZH: 七\nJP: 七"},
+            {"8", "ES: Ocho\nEN: Eight\nFR: Huit\nDE: Acht\nIT: Otto\nPT: Oito\nZH: 八\nJP: 八"},
+            {"9", "ES: Nueve\nEN: Nine\nFR: Neuf\nDE: Neun\nIT: Nove\nPT: Nove\nZH: 九\nJP: 九"},
+            {"mas", "ES: Más / Suma\nEN: Plus\nFR: Plus\nDE: Plus\nIT: Più\nPT: Mais\nZH: 加\nJP: プラス"},
+            {"menos", "ES: Menos / Resta\nEN: Minus\nFR: Moins\nDE: Minus\nIT: Meno\nPT: Menos\nZH: 减\nJP: マイナス"},
+            {"igual", "ES: Igual\nEN: Equals\nFR: Égal\nDE: Gleich\nIT: Uguale\nPT: Igual\nZH: 等于\nJP: イコール"}
+        };
     }
 
     void Update()
     {
-        // Obtener toques activos del nuevo sistema
-        var activeTouches = ETouch.activeTouches;
-        if (activeTouches.Count == 0) return;
+        var touches = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
 
-        // CASO 1: Un solo dedo (Selección y Rotación)
-        if (activeTouches.Count == 1)
+        if (touches.Count == 0) return;
+
+        var touch1 = touches[0];
+
+        if (touch1.phase == TouchPhase.Began)
         {
-            var touch = activeTouches[0];
-
-            // TAP: Selección
-            if (touch.phase == ETouchPhase.Began)
+            Ray ray = arCamera.ScreenPointToRay(touch1.screenPosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
             {
-                Ray ray = arCamera.ScreenPointToRay(touch.screenPosition);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit))
-                {
-                    // Si tocas el mismo objeto, abre/cierra info. Si tocas otro, selecciónalo.
-                    if (selectedObject == hit.transform)
-                    {
-                        ToggleInfoPanel();
-                    }
-                    else
-                    {
-                        SelectObject(hit.transform);
-                    }
-                    lastTouchPos = touch.screenPosition;
-                }
-                else
-                {
-                    // Si tocas el fondo, deseleccionar
-                    DeselectObject();
-                }
+                if (selectedObject == hit.transform) ToggleInfoPanel();
+                else SelectObject(hit.transform);
+                lastTouchPos = touch1.screenPosition;
             }
-            // DRAG: Rotación
-            else if (touch.phase == ETouchPhase.Moved && selectedObject != null)
+            else DeselectObject();
+        }
+
+        if (selectedObject != null)
+        {
+            if (touches.Count == 1 && touch1.phase == TouchPhase.Moved)
             {
-                Vector2 delta = touch.screenPosition - lastTouchPos;
+                Vector2 delta = touch1.screenPosition - lastTouchPos;
                 selectedObject.Rotate(Vector3.up, delta.x * rotationSpeed, Space.World);
-                lastTouchPos = touch.screenPosition;
+                lastTouchPos = touch1.screenPosition;
             }
-        }
-        // CASO 2: Dos dedos (Pellizco / Pinch para Escalar)
-        else if (activeTouches.Count == 2)
-        {
-            var touch1 = activeTouches[0];
-            var touch2 = activeTouches[1];
 
-            if (selectedObject != null)
+            if (touches.Count == 2)
             {
-                float currentDistance = Vector2.Distance(touch1.screenPosition, touch2.screenPosition);
+                var touch2 = touches[1];
+                float currentDist = Vector2.Distance(touch1.screenPosition, touch2.screenPosition);
 
-                // Guardar distancia inicial al empezar el pellizco
-                if (initialTouchDistance == 0)
-                {
-                    initialTouchDistance = currentDistance;
-                }
-                else
-                {
-                    float scaleFactor = currentDistance / initialTouchDistance;
-                    float newScale = initialScale * scaleFactor;
-                    newScale = Mathf.Clamp(newScale, minScale, maxScale);
-                    selectedObject.localScale = Vector3.one * newScale;
-                }
+                if (initialTouchDistance == 0f) initialTouchDistance = currentDist;
+
+                float newScale = initialScale * (currentDist / initialTouchDistance);
+                newScale = Mathf.Clamp(newScale, minScale, maxScale);
+                selectedObject.localScale = Vector3.one * newScale;
             }
-        }
-        else
-        {
-            // Resetear distancia si hay más o menos de 2 dedos
-            initialTouchDistance = 0;
+            else initialTouchDistance = 0f;
         }
     }
 
@@ -139,19 +102,20 @@ public class ObjectManipulation : MonoBehaviour
     {
         selectedObject = obj;
         initialScale = obj.localScale.x;
-        initialTouchDistance = 0; // Resetear pinch
-        if (isPanelOpen) ToggleInfoPanel(); // Cerrar panel si estaba abierto
+        initialTouchDistance = 0f;
+        if (isPanelOpen) ToggleInfoPanel();
     }
 
     void DeselectObject()
     {
         selectedObject = null;
-        if (isPanelOpen) ToggleInfoPanel(); // Cerrar panel al deseleccionar
+        if (isPanelOpen) ToggleInfoPanel();
     }
 
     void ToggleInfoPanel()
     {
         if (infoPanel == null || infoText == null) return;
+
         isPanelOpen = !isPanelOpen;
         infoPanel.SetActive(isPanelOpen);
 

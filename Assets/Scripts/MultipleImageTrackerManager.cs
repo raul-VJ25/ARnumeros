@@ -6,13 +6,9 @@ using TMPro;
 
 public class MultipleImageTrackerManager : MonoBehaviour
 {
-    [Header("Tracking Configuration")]
     [SerializeField] private List<GameObject> objectsToSpawn = new List<GameObject>();
-    [Range(5f, 25f)]
     [SerializeField] private float smoothingSpeed = 12f;
     [SerializeField] private Vector3 markerOffset = new Vector3(0f, 0.08f, 0.15f);
-
-    [Header("Status UI")]
     [SerializeField] private GameObject statusPanel;
     [SerializeField] private TextMeshProUGUI statusText;
 

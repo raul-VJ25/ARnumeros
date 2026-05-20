@@ -876,9 +876,9 @@ MonoBehaviour:
   infoPanel: {fileID: 1981892356}
   infoText: {fileID: 30489342}
   arCamera: {fileID: 1131689579}
-  rotationSpeed: 0.5
-  minScale: 0.5
-  maxScale: 3
+  rotationSpeed: 0.2
+  minScale: 0.01
+  maxScale: 0.2
 --- !u!114 &890631885
 MonoBehaviour:
   m_ObjectHideFlags: 0
