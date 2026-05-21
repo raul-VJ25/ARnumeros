@@ -132,13 +132,13 @@ public class MultipleImageTrackerManager : MonoBehaviour
         if (active.Count > 0)
         {
             statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(30, 100, 30, 220);
-            statusText.text = "Detecting: " + string.Join(", ", active);
+            statusText.text = "Detectando: " + string.Join(", ", active);
             statusText.color = Color.white;
         }
         else
         {
             statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(100, 80, 20, 220);
-            statusText.text = "Searching for markers...";
+            statusText.text = "Buscando marcadores...";
             statusText.color = new Color(1f, 0.9f, 0.3f);
         }
     }
