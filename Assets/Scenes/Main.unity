@@ -893,19 +893,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MultipleImageTrackerManager
   objectsToSpawn:
-  - {fileID: 2193123467223501541, guid: c7ee5dff397968f4eb82aeed2b1c58f7, type: 3}
-  - {fileID: 2193123467223501541, guid: 9e70f79defe276d4081438b32518def7, type: 3}
-  - {fileID: 2193123467223501541, guid: 118e563d792266441b979a62e09411f4, type: 3}
-  - {fileID: 2193123467223501541, guid: d33efe3ba43d565459f8ec8728ed6e2d, type: 3}
-  - {fileID: 2193123467223501541, guid: 49c60c65e60d18c4b8c6b60b6869ccc5, type: 3}
-  - {fileID: 2193123467223501541, guid: 050a6201f2f88684b80eea0ad9c32641, type: 3}
-  - {fileID: 2193123467223501541, guid: 49db77192950536438cb7f8d1b440d71, type: 3}
-  - {fileID: 2193123467223501541, guid: 101226a9e45677147819b05fcdedfdbd, type: 3}
-  - {fileID: 2193123467223501541, guid: b843de080d7dc4f4884be89de8c58339, type: 3}
-  - {fileID: 2193123467223501541, guid: a725249ae8226a546b266d8c1a7c9ae0, type: 3}
-  - {fileID: 2193123467223501541, guid: 45473f1e5817a70428bad60f2410d87f, type: 3}
-  - {fileID: 2193123467223501541, guid: 9abf61fdc6219fc40b349de739bd31a4, type: 3}
-  - {fileID: 2193123467223501541, guid: 38a31669cfc479243a7bb79ad8781719, type: 3}
+  - {fileID: 7523637102035833723, guid: 9bcc4dd45fce71c4ab94662b4e930cc7, type: 3}
+  - {fileID: 6461167810270896853, guid: b1d51a79e820d39409f875aabdb1d292, type: 3}
+  - {fileID: 663567969237706822, guid: b6caf0434e835ae49b6cf6e2dc9cbf8a, type: 3}
+  - {fileID: 6090289773909724118, guid: 872e0285070c4984ba3a0fe64d8214da, type: 3}
+  - {fileID: 4175590781506765791, guid: 29301ae47da72144d9325af5132ab2e7, type: 3}
+  - {fileID: 3911696260775206036, guid: 4358d0384dd51754b924d403f5ceefeb, type: 3}
+  - {fileID: 7696661705799123285, guid: 3698e85008ad5304ba2b27a48cb744f0, type: 3}
+  - {fileID: 1265177870573907891, guid: 14d1b060706e3b54daff12d6539525f3, type: 3}
+  - {fileID: 3746620841062339172, guid: e138d147028104c4eb9923a9a20ff31b, type: 3}
+  - {fileID: 6920641707420045857, guid: b48de7b14d2163a4baf7a9b46d7ae2cb, type: 3}
   smoothingSpeed: 20
   markerOffset: {x: 0, y: 0.1, z: 0.02}
   positionThreshold: 0.01
