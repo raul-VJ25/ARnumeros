@@ -903,9 +903,9 @@ MonoBehaviour:
   - {fileID: 1265177870573907891, guid: 14d1b060706e3b54daff12d6539525f3, type: 3}
   - {fileID: 3746620841062339172, guid: e138d147028104c4eb9923a9a20ff31b, type: 3}
   - {fileID: 6920641707420045857, guid: b48de7b14d2163a4baf7a9b46d7ae2cb, type: 3}
-  smoothingSpeed: 18
-  markerOffset: {x: 0, y: 0.08, z: 0.12}
-  positionThreshold: 0.003
+  smoothingSpeed: 20
+  markerOffset: {x: 0, y: 0.06, z: 0.12}
+  positionThreshold: 0.01
   statusPanel: {fileID: 36020477}
   statusText: {fileID: 55340279}
 --- !u!1 &1060216204
