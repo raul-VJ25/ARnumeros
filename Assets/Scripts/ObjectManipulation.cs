@@ -15,7 +15,7 @@ public class ObjectManipulation : MonoBehaviour
     [SerializeField] private float rotationSpeed = 0.5f;
     [SerializeField] private float minScale = 0.3f;
     [SerializeField] private float maxScale = 1.5f;
-    [SerializeField] private float tapThreshold = 10f;
+    [SerializeField] private float tapThreshold = 12f;
 
     private Transform selectedObject;
     private Vector2 touchStartPos;
@@ -30,10 +30,8 @@ public class ObjectManipulation : MonoBehaviour
     void Start()
     {
         EnhancedTouchSupport.Enable();
-
         if (arCamera == null) arCamera = Camera.main;
         if (infoPanel != null) infoPanel.SetActive(false);
-
         InitializeTranslations();
     }
 
@@ -60,7 +58,6 @@ public class ObjectManipulation : MonoBehaviour
     void Update()
     {
         var touches = UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches;
-
         if (touches.Count == 0)
         {
             isDragging = false;
@@ -96,27 +93,20 @@ public class ObjectManipulation : MonoBehaviour
 
         if (selectedObject != null)
         {
-            // PELLIZCO (2 dedos)
             if (touches.Count == 2)
             {
                 wasPinching = true;
                 isDragging = true;
-
                 var touch2 = touches[1];
                 float currentDist = Vector2.Distance(touch1.screenPosition, touch2.screenPosition);
+                if (initialTouchDistance == 0f) initialTouchDistance = currentDist;
 
-                if (initialTouchDistance == 0f)
-                    initialTouchDistance = currentDist;
-
-                float scaleFactor = currentDist / initialTouchDistance;
-                float newScale = initialScale * scaleFactor;
+                float newScale = initialScale * (currentDist / initialTouchDistance);
                 newScale = Mathf.Clamp(newScale, minScale, maxScale);
                 selectedObject.localScale = Vector3.one * newScale;
             }
-            // ROTACIÓN (1 dedo)
             else if (touches.Count == 1 && touch1.phase == TouchPhase.Moved)
             {
-                // Si venimos de un pellizco, reseteamos la distancia inicial
                 if (wasPinching)
                 {
                     wasPinching = false;
@@ -125,28 +115,19 @@ public class ObjectManipulation : MonoBehaviour
                 }
 
                 float distanceMoved = Vector2.Distance(touchStartPos, touch1.screenPosition);
-
-                if (distanceMoved > tapThreshold)
-                {
-                    isDragging = true;
-                }
+                if (distanceMoved > tapThreshold) isDragging = true;
 
                 if (isDragging)
                 {
                     Vector2 delta = touch1.screenPosition - lastTouchPos;
                     selectedObject.Rotate(Vector3.up, delta.x * rotationSpeed, Space.World);
                 }
-
                 lastTouchPos = touch1.screenPosition;
             }
 
-            // Al soltar los dedos
             if (touch1.phase == TouchPhase.Ended || touch1.phase == TouchPhase.Canceled)
             {
-                if (!isDragging && !wasPinching)
-                {
-                    ToggleInfoPanel();
-                }
+                if (!isDragging && !wasPinching) ToggleInfoPanel();
                 selectedObject = null;
                 isDragging = false;
                 wasPinching = false;
@@ -158,7 +139,6 @@ public class ObjectManipulation : MonoBehaviour
     void ToggleInfoPanel()
     {
         if (infoPanel == null || infoText == null) return;
-
         isPanelOpen = !isPanelOpen;
         infoPanel.SetActive(isPanelOpen);
 

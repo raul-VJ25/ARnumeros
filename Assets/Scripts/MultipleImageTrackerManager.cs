@@ -7,16 +7,15 @@ using TMPro;
 public class MultipleImageTrackerManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> objectsToSpawn = new List<GameObject>();
-    [SerializeField] private float smoothingSpeed = 20f;
-    [SerializeField] private Vector3 markerOffset = new Vector3(0f, 0.08f, 0.15f);
-    [SerializeField] private float positionThreshold = 0.002f;
+    [SerializeField] private float smoothingSpeed = 18f;
+    [SerializeField] private Vector3 markerOffset = new Vector3(0f, 0.08f, 0.12f);
+    [SerializeField] private float positionThreshold = 0.003f;
     [SerializeField] private GameObject statusPanel;
     [SerializeField] private TextMeshProUGUI statusText;
 
     private ARTrackedImageManager trackedImageManager;
     private Dictionary<string, GameObject> arObjects = new Dictionary<string, GameObject>();
     private Dictionary<string, bool> activeStates = new Dictionary<string, bool>();
-    private Dictionary<string, Vector3> lastPositions = new Dictionary<string, Vector3>();
 
     void Start()
     {
@@ -76,7 +75,6 @@ public class MultipleImageTrackerManager : MonoBehaviour
                           + trackedImage.transform.forward * markerOffset.z;
 
         Transform t = arObjects[name].transform;
-
         if (Vector3.Distance(t.position, targetPos) > positionThreshold)
         {
             float factor = 1f - Mathf.Exp(-smoothingSpeed * Time.deltaTime);
@@ -95,13 +93,13 @@ public class MultipleImageTrackerManager : MonoBehaviour
         if (active.Count > 0)
         {
             statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(30, 100, 30, 220);
-            statusText.text = "Detecting: " + string.Join(", ", active);
+            statusText.text = "Detectando: " + string.Join(", ", active);
             statusText.color = Color.white;
         }
         else
         {
             statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(100, 80, 20, 220);
-            statusText.text = "Searching for markers...";
+            statusText.text = "Buscando marcadores...";
             statusText.color = new Color(1f, 0.9f, 0.3f);
         }
     }
@@ -118,7 +116,6 @@ public class MultipleImageTrackerManager : MonoBehaviour
             {
                 arObjects.Add(instance.name, instance);
                 activeStates.Add(instance.name, false);
-                lastPositions.Add(instance.name, Vector3.zero);
             }
             else Destroy(instance);
         }
