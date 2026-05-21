@@ -6,12 +6,9 @@ using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 public class ObjectManipulation : MonoBehaviour
 {
-    [Header("UI Configuration")]
     [SerializeField] private GameObject infoPanel;
     [SerializeField] private TextMeshProUGUI infoText;
     [SerializeField] private Camera arCamera;
-
-    [Header("Interaction Settings")]
     [SerializeField] private float rotationSpeed = 0.5f;
     [SerializeField] private float minScale = 0.3f;
     [SerializeField] private float maxScale = 1.5f;

@@ -18,8 +18,10 @@ public class MultipleImageTrackerManager : MonoBehaviour
     private ARTrackedImageManager trackedImageManager;
     private Dictionary<string, GameObject> arObjects = new Dictionary<string, GameObject>();
     private Dictionary<string, bool> activeStates = new Dictionary<string, bool>();
-    private Dictionary<string, Quaternion> initialRotations = new Dictionary<string, Quaternion>();
-    private Dictionary<string, Vector3> initialScales = new Dictionary<string, Vector3>();
+    private Dictionary<string, float> initialScales = new Dictionary<string, float>();
+    private Dictionary<string, float> lastActiveTime = new Dictionary<string, float>();
+
+    private const float RESET_DELAY = 5f;
 
     void Start()
     {
@@ -54,7 +56,6 @@ public class MultipleImageTrackerManager : MonoBehaviour
                 }
             }
         }
-        UpdateStatusUI();
     }
 
     void UpdateTrackedImages(ARTrackedImage trackedImage)
@@ -63,36 +64,61 @@ public class MultipleImageTrackerManager : MonoBehaviour
         string name = trackedImage.referenceImage.name;
         if (!arObjects.ContainsKey(name)) return;
 
-        if (trackedImage.trackingState is TrackingState.Limited or TrackingState.None)
+        bool isValid = trackedImage.trackingState == TrackingState.Tracking;
+
+        if (isValid)
+        {
+            bool wasInactive = !activeStates[name];
+            arObjects[name].SetActive(true);
+            activeStates[name] = true;
+            lastActiveTime[name] = Time.time;
+
+            Transform t = arObjects[name].transform;
+
+            if (wasInactive)
+            {
+                t.rotation = trackedImage.transform.rotation * initialRotation;
+                t.localScale = Vector3.one * initialScales[name];
+            }
+
+            Vector3 targetPos = trackedImage.transform.position
+                              + trackedImage.transform.right * markerOffset.x
+                              + trackedImage.transform.up * markerOffset.y
+                              + trackedImage.transform.forward * markerOffset.z;
+
+            if (Vector3.Distance(t.position, targetPos) > positionThreshold)
+            {
+                float factor = 1f - Mathf.Exp(-smoothingSpeed * Time.deltaTime);
+                t.position = Vector3.Lerp(t.position, targetPos, factor);
+            }
+            else
+            {
+                t.position = targetPos;
+            }
+        }
+        else
         {
             arObjects[name].SetActive(false);
             activeStates[name] = false;
-            return;
         }
+        UpdateStatusUI();
+    }
 
-        bool wasActive = arObjects[name].activeSelf;
-        arObjects[name].SetActive(true);
-        activeStates[name] = true;
-
-        Transform t = arObjects[name].transform;
-
-        // Actualización de posición con suavizado
-        Vector3 targetPos = trackedImage.transform.position
-                          + trackedImage.transform.right * markerOffset.x
-                          + trackedImage.transform.up * markerOffset.y
-                          + trackedImage.transform.forward * markerOffset.z;
-
-        if (Vector3.Distance(t.position, targetPos) > positionThreshold)
+    void CheckResetTimers()
+    {
+        foreach (var kvp in activeStates)
         {
-            float factor = 1f - Mathf.Exp(-smoothingSpeed * Time.deltaTime);
-            t.position = Vector3.Lerp(t.position, targetPos, factor);
-        }
-
-        // Reset de rotación y escala al volver a detectar el marcador
-        if (!wasActive)
-        {
-            t.rotation = initialRotations[name];
-            t.localScale = initialScales[name];
+            string name = kvp.Key;
+            if (!kvp.Value && lastActiveTime.ContainsKey(name))
+            {
+                if (Time.time - lastActiveTime[name] > RESET_DELAY)
+                {
+                    Transform t = arObjects[name].transform;
+                    t.localScale = Vector3.one * initialScales[name];
+                    arObjects[name].SetActive(false);
+                    lastActiveTime[name] = Time.time;
+                }
+            }
         }
     }
 
@@ -106,13 +132,13 @@ public class MultipleImageTrackerManager : MonoBehaviour
         if (active.Count > 0)
         {
             statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(30, 100, 30, 220);
-            statusText.text = "Detectados: " + string.Join(", ", active);
+            statusText.text = "Detecting: " + string.Join(", ", active);
             statusText.color = Color.white;
         }
         else
         {
             statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(100, 80, 20, 220);
-            statusText.text = "Buscando marcadores...";
+            statusText.text = "Searching for markers...";
             statusText.color = new Color(1f, 0.9f, 0.3f);
         }
     }
@@ -131,13 +157,18 @@ public class MultipleImageTrackerManager : MonoBehaviour
             {
                 arObjects.Add(instance.name, instance);
                 activeStates.Add(instance.name, false);
-                initialRotations.Add(instance.name, instance.transform.rotation);
-                initialScales.Add(instance.name, instance.transform.localScale);
+                initialScales.Add(instance.name, instance.transform.localScale.x);
+                lastActiveTime.Add(instance.name, Time.time);
             }
             else
             {
                 Destroy(instance);
             }
         }
+    }
+
+    void Update()
+    {
+        CheckResetTimers();
     }
 }
