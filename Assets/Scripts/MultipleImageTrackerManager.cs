@@ -13,9 +13,13 @@ public class MultipleImageTrackerManager : MonoBehaviour
     [SerializeField] private GameObject statusPanel;
     [SerializeField] private TextMeshProUGUI statusText;
 
+    private static readonly Quaternion initialRotation = Quaternion.Euler(-90f, 180f, 0f);
+
     private ARTrackedImageManager trackedImageManager;
     private Dictionary<string, GameObject> arObjects = new Dictionary<string, GameObject>();
     private Dictionary<string, bool> activeStates = new Dictionary<string, bool>();
+    private Dictionary<string, Quaternion> initialRotations = new Dictionary<string, Quaternion>();
+    private Dictionary<string, Vector3> initialScales = new Dictionary<string, Vector3>();
 
     void Start()
     {
@@ -66,24 +70,29 @@ public class MultipleImageTrackerManager : MonoBehaviour
             return;
         }
 
+        bool wasActive = arObjects[name].activeSelf;
         arObjects[name].SetActive(true);
         activeStates[name] = true;
 
-        // Posición con offset
+        Transform t = arObjects[name].transform;
+
+        // Actualización de posición con suavizado
         Vector3 targetPos = trackedImage.transform.position
                           + trackedImage.transform.right * markerOffset.x
                           + trackedImage.transform.up * markerOffset.y
                           + trackedImage.transform.forward * markerOffset.z;
 
-        Transform t = arObjects[name].transform;
         if (Vector3.Distance(t.position, targetPos) > positionThreshold)
         {
             float factor = 1f - Mathf.Exp(-smoothingSpeed * Time.deltaTime);
             t.position = Vector3.Lerp(t.position, targetPos, factor);
+        }
 
-            // AQUÍ ESTÁ EL CAMBIO: Aplicamos la rotación del marcador + el giro para pantalla (-90, 180)
-            Quaternion targetRot = trackedImage.transform.rotation * Quaternion.Euler(-90, 180, 0);
-            t.rotation = Quaternion.Slerp(t.rotation, targetRot, factor);
+        // Reset de rotación y escala al volver a detectar el marcador
+        if (!wasActive)
+        {
+            t.rotation = initialRotations[name];
+            t.localScale = initialScales[name];
         }
     }
 
@@ -113,15 +122,22 @@ public class MultipleImageTrackerManager : MonoBehaviour
         foreach (GameObject prefab in objectsToSpawn)
         {
             if (prefab == null) continue;
-            GameObject instance = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+
+            GameObject instance = Instantiate(prefab, Vector3.zero, initialRotation);
             instance.name = prefab.name;
             instance.SetActive(false);
+
             if (!arObjects.ContainsKey(instance.name))
             {
                 arObjects.Add(instance.name, instance);
                 activeStates.Add(instance.name, false);
+                initialRotations.Add(instance.name, instance.transform.rotation);
+                initialScales.Add(instance.name, instance.transform.localScale);
             }
-            else Destroy(instance);
+            else
+            {
+                Destroy(instance);
+            }
         }
     }
 }
