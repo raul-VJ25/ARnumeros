@@ -69,6 +69,7 @@ public class MultipleImageTrackerManager : MonoBehaviour
         arObjects[name].SetActive(true);
         activeStates[name] = true;
 
+        // Posición con offset
         Vector3 targetPos = trackedImage.transform.position
                           + trackedImage.transform.right * markerOffset.x
                           + trackedImage.transform.up * markerOffset.y
@@ -79,7 +80,10 @@ public class MultipleImageTrackerManager : MonoBehaviour
         {
             float factor = 1f - Mathf.Exp(-smoothingSpeed * Time.deltaTime);
             t.position = Vector3.Lerp(t.position, targetPos, factor);
-            t.rotation = Quaternion.Slerp(t.rotation, trackedImage.transform.rotation, factor);
+
+            // AQUÍ ESTÁ EL CAMBIO: Aplicamos la rotación del marcador + el giro para pantalla (-90, 180)
+            Quaternion targetRot = trackedImage.transform.rotation * Quaternion.Euler(-90, 180, 0);
+            t.rotation = Quaternion.Slerp(t.rotation, targetRot, factor);
         }
     }
 
@@ -93,7 +97,7 @@ public class MultipleImageTrackerManager : MonoBehaviour
         if (active.Count > 0)
         {
             statusPanel.GetComponent<UnityEngine.UI.Image>().color = new Color32(30, 100, 30, 220);
-            statusText.text = "Detectando: " + string.Join(", ", active);
+            statusText.text = "Detectados: " + string.Join(", ", active);
             statusText.color = Color.white;
         }
         else
